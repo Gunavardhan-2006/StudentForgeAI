@@ -11,11 +11,8 @@ import {
   BookOpen, 
   Sparkles, 
   Layers, 
-  Award, 
-  Tag,
-  SlidersHorizontal,
-  CheckCircle2,
-  XSquare
+  Tag, 
+  SlidersHorizontal
 } from 'lucide-react';
 
 interface SidebarSyllabusProps {
@@ -123,7 +120,7 @@ export const SidebarSyllabus: React.FC<SidebarSyllabusProps> = ({
   const currentSemObj = semesters.find((sem) => sem.id === enrolledSemId) || semesters[4];
 
   return (
-    <aside className="w-full lg:w-[34%] xl:w-[32%] flex-shrink-0 flex flex-col gap-5">
+    <aside className="w-full lg:w-[34%] xl:w-[32%] flex-shrink-0 flex flex-col gap-5 lg:sticky lg:top-20 lg:max-h-[calc(100vh-100px)] lg:overflow-y-auto pr-1.5 custom-scrollbar">
       
       {/* Branch Selector & Subject Manager Button */}
       <div className="glass-panel p-4 rounded-xl border border-border space-y-3">
@@ -169,7 +166,7 @@ export const SidebarSyllabus: React.FC<SidebarSyllabusProps> = ({
       </div>
 
       {/* Special Section: Current Enrolled Semester Active Courses */}
-      <div className="glass-panel p-4 rounded-xl border border-cyan-accent/30 bg-gradient-to-br from-card via-card to-canvas relative overflow-hidden shadow-cyanGlow">
+      <div className="glass-panel p-4 rounded-xl border border-cyan-accent/30 bg-gradient-to-br from-card via-card to-canvas relative shadow-cyanGlow">
         <div className="flex items-center justify-between mb-3 border-b border-border/60 pb-2">
           <div className="flex items-center space-x-2 text-cyan-accent font-semibold text-[14px]">
             <BookOpen className="w-4 h-4 animate-pulse" />
@@ -188,20 +185,20 @@ export const SidebarSyllabus: React.FC<SidebarSyllabusProps> = ({
           Check subjects you are studying right now to generate custom blueprints:
         </p>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col space-y-2.5">
           {currentSemObj.subjects.map((sub) => {
             const isChecked = activeSubjectNames.includes(sub.name);
             return (
               <div
                 key={sub.id}
                 onClick={() => onToggleSubject(sub.name)}
-                className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all ${
+                className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all ${
                   isChecked
                     ? 'bg-cyan-accent/15 border border-cyan-accent/50 text-ghost shadow-inner'
                     : 'bg-card border border-border/80 text-readable hover:bg-border/30'
                 }`}
               >
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2.5">
                   {isChecked ? (
                     <CheckSquare className="w-4 h-4 text-cyan-accent flex-shrink-0" />
                   ) : (
@@ -231,31 +228,34 @@ export const SidebarSyllabus: React.FC<SidebarSyllabusProps> = ({
           </button>
         </div>
 
-        <div className="flex flex-col gap-2 max-h-[460px] overflow-y-auto pr-1">
+        {/* Entire sidebar scrolls naturally without rigid height clipping */}
+        <div className="flex flex-col space-y-3">
           {semesters.map((sem) => {
             const isOpen = openSemesters[sem.id];
             const semActiveCount = sem.subjects.filter((s) => activeSubjectNames.includes(s.name)).length;
             const isAllSemSelected = semActiveCount === sem.subjects.length && sem.subjects.length > 0;
+            const hasManySubjects = sem.subjects.length >= 10;
 
             return (
-              <div key={sem.id} className="border border-border rounded-lg bg-card/60 overflow-hidden">
+              <div key={sem.id} className="border border-border rounded-xl bg-card/60 transition-all duration-200">
                 {/* Semester Accordion Header with 1-Click Select All Controls */}
                 <div
                   onClick={() => toggleSemester(sem.id)}
-                  className="w-full flex items-center justify-between p-3 text-left hover:bg-border/30 transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-between p-3.5 text-left hover:bg-border/30 transition-colors cursor-pointer select-none rounded-t-xl"
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2.5">
                     {isOpen ? (
-                      <ChevronDown className="w-4 h-4 text-indigo-accent" />
+                      <ChevronDown className="w-4 h-4 text-indigo-accent flex-shrink-0" />
                     ) : (
-                      <ChevronRight className="w-4 h-4 text-muted" />
+                      <ChevronRight className="w-4 h-4 text-muted flex-shrink-0" />
                     )}
                     <span className="text-[13px] font-semibold text-ghost">{sem.title}</span>
                   </div>
 
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
                     {/* Semester Quick Toggle Buttons */}
                     <button
+                      type="button"
                       onClick={(e) => isAllSemSelected ? handleClearSem(e, sem) : handleSelectAllInSem(e, sem)}
                       title={isAllSemSelected ? "Clear all in this sem" : "Select all in this sem"}
                       className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-canvas hover:bg-indigo-accent/20 border border-border text-indigo-accent hover:border-indigo-accent/40 transition-all"
@@ -271,32 +271,35 @@ export const SidebarSyllabus: React.FC<SidebarSyllabusProps> = ({
                   </div>
                 </div>
 
+                {/* Accordion Body: Generous vertical spacing (py-3, space-y-3), scrollable only if 10+ subjects */}
                 {isOpen && (
-                  <div className="p-3 pt-0 flex flex-col gap-2 border-t border-border/40 bg-canvas/30">
-                    {sem.subjects.map((sub) => {
-                      const isChecked = activeSubjectNames.includes(sub.name);
-                      return (
-                        <div
-                          key={sub.id}
-                          onClick={() => onToggleSubject(sub.name)}
-                          className={`flex items-center justify-between p-2 rounded-md cursor-pointer transition-all ${
-                            isChecked
-                              ? 'bg-indigo-accent/15 border border-indigo-accent/40 text-ghost'
-                              : 'hover:bg-border/30 text-readable'
-                          }`}
-                        >
-                          <div className="flex items-center space-x-2.5">
-                            {isChecked ? (
-                              <CheckSquare className="w-4 h-4 text-indigo-accent flex-shrink-0" />
-                            ) : (
-                              <Square className="w-4 h-4 text-muted flex-shrink-0" />
-                            )}
-                            <span className="text-[13px] font-medium">{sub.name}</span>
+                  <div className="p-3.5 border-t border-border/40 bg-canvas/30 rounded-b-xl">
+                    <div className={`flex flex-col space-y-2.5 ${hasManySubjects ? 'max-h-[320px] overflow-y-auto pr-1 custom-scrollbar' : ''}`}>
+                      {sem.subjects.map((sub) => {
+                        const isChecked = activeSubjectNames.includes(sub.name);
+                        return (
+                          <div
+                            key={sub.id}
+                            onClick={() => onToggleSubject(sub.name)}
+                            className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all ${
+                              isChecked
+                                ? 'bg-indigo-accent/15 border border-indigo-accent/40 text-ghost'
+                                : 'bg-card/50 hover:bg-border/30 border border-border/50 text-readable'
+                            }`}
+                          >
+                            <div className="flex items-center space-x-2.5">
+                              {isChecked ? (
+                                <CheckSquare className="w-4 h-4 text-indigo-accent flex-shrink-0" />
+                              ) : (
+                                <Square className="w-4 h-4 text-muted flex-shrink-0" />
+                              )}
+                              <span className="text-[13px] font-medium leading-snug">{sub.name}</span>
+                            </div>
+                            <span className="text-[11px] font-mono text-muted flex-shrink-0 ml-2">{sub.code}</span>
                           </div>
-                          <span className="text-[11px] font-mono text-muted">{sub.code}</span>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
               </div>
@@ -312,14 +315,14 @@ export const SidebarSyllabus: React.FC<SidebarSyllabusProps> = ({
           <span>Elective Bucket (PE & OE Pools)</span>
         </div>
 
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {allElectives.map((elec) => {
             const isSelected = activeSubjectNames.includes(elec.name);
             return (
               <button
                 key={elec.id}
                 onClick={() => onToggleSubject(elec.name)}
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-mono text-left transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-[11px] font-mono text-left transition-all ${
                   isSelected
                     ? 'bg-emerald-accent text-canvas font-bold border border-emerald-accent shadow-glow'
                     : 'bg-card border border-border text-muted hover:text-ghost hover:border-border/80'
@@ -340,7 +343,7 @@ export const SidebarSyllabus: React.FC<SidebarSyllabusProps> = ({
           <span>Industry Domain Filter</span>
         </div>
 
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {DOMAIN_OPTIONS.map((domain) => {
             const isSelected = selectedDomain === domain;
             return (
