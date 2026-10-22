@@ -3,6 +3,7 @@
 import React from 'react';
 import { StudentProfile } from '@/types';
 import { Cpu, ShieldCheck, Bot, Activity, UserCheck, LogIn, LogOut, ChevronDown, CheckCircle2 } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface HeaderProps {
   profile: StudentProfile;
@@ -61,15 +62,18 @@ export const Header: React.FC<HeaderProps> = ({
           
           {/* Mobile buttons */}
           <div className="flex md:hidden items-center space-x-2">
+            <ThemeToggle showMenu={false} />
             <button
               onClick={onOpenAuthModal}
               className="p-2 rounded-lg bg-card border border-border text-xs flex items-center gap-1"
+              aria-label="Student Profile"
             >
               <UserCheck className="w-4 h-4 text-cyan-accent" />
             </button>
             <button
               onClick={onOpenMentor}
               className="p-2 rounded-lg bg-indigo-accent/10 text-indigo-accent border border-indigo-accent/30 text-xs flex items-center gap-1.5"
+              aria-label="AI Code Mentor"
             >
               <Bot className="w-4 h-4" />
             </button>
@@ -78,6 +82,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={onLogout}
                 className="p-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/30 text-xs flex items-center"
                 title="Log Out to Login Screen"
+                aria-label="Log out"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -131,7 +136,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         </div>
 
-        {/* Top Header Actions (Commit Guard, AI Mentor, Log Out) */}
+        {/* Top Header Actions (Commit Guard, AI Mentor, Theme Toggle, Log Out) */}
         <div className="hidden md:flex items-center space-x-3">
           <button
             onClick={onOpenCommitGuard}
@@ -153,10 +158,13 @@ export const Header: React.FC<HeaderProps> = ({
             <span>AI Code Mentor</span>
           </button>
 
+          {/* Theme Toggle beside AI Code Mentor & Logout */}
+          <ThemeToggle />
+
           {onLogout && (
             <button
               onClick={onLogout}
-              className="flex items-center space-x-1.5 px-3 py-2 bg-card hover:bg-red-500/10 text-muted hover:text-red-400 border border-border hover:border-red-500/30 rounded-xl transition-all font-mono text-xs"
+              className="flex items-center space-x-1.5 px-3 py-2 bg-card hover:bg-red-500/10 text-muted hover:text-red-400 border border-border hover:border-red-500/30 rounded-xl transition-all font-mono text-xs cursor-pointer"
               title="Log out and return to Login Screen"
             >
               <LogOut className="w-4 h-4" />

@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,34 +10,58 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        canvas: "#090D16",
-        card: "#0F172A",
-        border: "#1E293B",
+        background: "var(--background)",
+        surface: "var(--surface)",
+        card: "var(--card)",
+        sidebar: "var(--sidebar)",
+        border: "var(--border)",
+        text: {
+          primary: "var(--text-primary)",
+          secondary: "var(--text-secondary)",
+          muted: "var(--text-muted)",
+        },
+        primary: {
+          DEFAULT: "var(--primary)",
+          hover: "var(--primary-hover)",
+        },
+        accent: {
+          DEFAULT: "var(--accent)",
+          hover: "var(--accent-hover)",
+        },
+        success: "var(--success)",
+        warning: "var(--warning)",
+        danger: "var(--danger)",
+
+        // Harmonize existing legacy tokens to CSS variables so all existing components adapt seamlessly:
+        canvas: "var(--background)",
+        ghost: "var(--text-primary)",
+        readable: "var(--text-secondary)",
+        muted: "var(--text-muted)",
         indigo: {
-          accent: "#6366F1",
-          hover: "#4F46E5",
-          glow: "rgba(99, 102, 241, 0.25)",
+          accent: "var(--primary)",
+          hover: "var(--primary-hover)",
+          glow: "rgba(var(--primary-rgb), 0.25)",
         },
         cyan: {
-          accent: "#06B6D4",
-          hover: "#0891B2",
-          glow: "rgba(6, 182, 212, 0.2)",
+          accent: "var(--accent)",
+          hover: "var(--accent-hover)",
+          glow: "rgba(var(--accent-rgb), 0.2)",
         },
         emerald: {
-          accent: "#10B981",
+          accent: "var(--success)",
           hover: "#059669",
         },
-        ghost: "#F8FAFC",
-        readable: "#CBD5E1",
-        muted: "#94A3B8",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "Plus Jakarta Sans", "sans-serif"],
         mono: ["var(--font-jetbrains)", "JetBrains Mono", "monospace"],
       },
       boxShadow: {
-        glow: "0 0 25px -5px rgba(99, 102, 241, 0.3)",
-        cyanGlow: "0 0 20px -3px rgba(6, 182, 212, 0.3)",
+        glow: "0 0 25px -5px rgba(var(--primary-rgb), 0.3)",
+        cyanGlow: "0 0 20px -3px rgba(var(--accent-rgb), 0.3)",
+      },
+      transitionDuration: {
+        '250': '250ms',
       },
     },
   },

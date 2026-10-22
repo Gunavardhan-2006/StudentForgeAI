@@ -113,15 +113,9 @@ export default function Home() {
     );
   };
 
-  // Reset Filters Handler
+  // Reset Filters Handler (Clears all subjects, resetting recommendations and integrated projects)
   const handleResetFilters = () => {
-    const semIds = [...profile.parsedMeta.completedSemIds, profile.parsedMeta.enrolledSemId];
-    const autoChecked = currentSemesters
-      .filter((sem) => semIds.includes(sem.id))
-      .flatMap((sem) => sem.subjects)
-      .map((sub) => sub.name);
-
-    setActiveSubjectNames(autoChecked);
+    setActiveSubjectNames([]);
     setSelectedDomain('All');
     setSelectedDifficulty('All');
   };
@@ -139,7 +133,7 @@ export default function Home() {
 
       // Multi-subject integrated project match
       const matchesSubject =
-        activeSubjectNames.length === 0 ||
+        activeSubjectNames.length > 0 &&
         bp.requiredSubjects.some((reqSub) => activeSubjectNames.includes(reqSub));
 
       const matchesDomain = selectedDomain === 'All' || bp.domain === selectedDomain;
